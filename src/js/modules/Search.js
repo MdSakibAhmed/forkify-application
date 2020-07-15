@@ -17,7 +17,7 @@ export default class Search{
 
            // return this.result;
 
-            //console.log(this.result);
+            console.log(this.result);
 
             
 

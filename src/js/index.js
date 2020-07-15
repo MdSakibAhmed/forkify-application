@@ -20,8 +20,9 @@
 // console.log(`Hi I am ${str}`);
 
 import Search from './modules/Search'
-
-
+import * as SearchView from './views/searchView'
+import {elements,renderLoder,clearLoader} from './views/base'
+import Recipe from './modules/Recipe'
 
 
 
@@ -36,10 +37,15 @@ Global App controler
 
 const state = {}
 
+/*
+ *SEARCH CONTROLER
+*/
+
 const controlSearch = async () =>{
 
     // 1) get query from the view
-    const query = 'pizza'
+    const query = SearchView.getInput();
+    console.log(query);
 
     if(query){
 
@@ -48,32 +54,109 @@ const controlSearch = async () =>{
         console.log(state.search);
 
         // 3) prapare UI for results
+         
+        SearchView.clearInput()
+
+        SearchView.clearResult();
+        renderLoder(elements.result)
 
         // 4) search for recipes
-       const recip = await state.search.getSearch();
-       console.log(recip);
-       console.log(state.search.result);
+
+        try{
+        await state.search.getSearch();
+
+        clearLoader()
+
+        // 5) render result on the UI
+       
+        SearchView.renderResult(state.search.result);}
+        catch(error){
+            alert(error)
+        }
+
+        
+
+       
     }
     
 
 }
 
-document.querySelector('.search').addEventListener('submit', e =>{
+elements.searchForm.addEventListener('submit', e =>{
     e.preventDefault()
     console.log(e);
     controlSearch()
 
 })
 
-// const search = new Search('pizza')
 
 
-// console.log(search);
+elements.searchResPages.addEventListener('click', e =>{
+    const btn = e.target.closest('.btn-inline')
 
-// search.getSearch();
-  
+    if(btn){
 
-//getSearch('garlic')
+        const goToPage = parseInt(btn.dataset.goto,10)
+        SearchView.clearResult()
+        SearchView.renderResult(state.search.result,goToPage);
+        console.log(goToPage);
+    }
+    console.log(btn);
+})
+
+/*
+ * RECIPE CONTROLER
+
+*/
+// The Window.location read-only property returns a Location object with information about the current location of the document.
+
+
+const controleRecipe = async () =>{
+    // Get Id from URL
+    const id = window.location.hash.replace('#','');
+    //console.log(id);
+
+    // Prepeare UI for changes
+
+    // Creat new  recipe Object
+    if(id){
+    state.recipe = new Recipe(id);
+
+try{
+
+    await state.recipe.getRecipe()
+    
+    // Calcaulating Servicing and timing
+    state.recipe.calcTime()
+    state.recipe.calcServing()
+    // Render recipe
+    console.log(state.recipe);
+}
+catch(error){
+    alert(error)
+}
+    // Get Recipe Data
+    }
+
+
+}
+// The hashchange event fires when a window's hash changes (see Window.location and HTMLHyperlinkElementUtils.hash).
+// window.addEventListener('hashchange',controleRecipe)
+// window.addEventListener('load',controleRecipe)
+
+// add multiple diferents events with one eventListener
+
+['hashchange','load'].forEach(  event => window.addEventListener(event,controleRecipe));
+
+
+
+
+
+
+
+// const r = new Recipe(46956)
+//  r.getRecipe()
+// console.log(r);
 
 
 
