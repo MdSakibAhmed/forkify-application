@@ -25,15 +25,36 @@ export default class Recipe {
 
     }
 
-    calcTime(){
+    calcTime() {
         // Assuming that we need 15 min for each 3 ingradients
-       const  numIngr = this.ingredients.length;
-       const peroieds = Math.ceil(numIngr / 3);
-       this.time = peroieds * 15;
+        const numIngr = this.ingredients.length;
+        const peroieds = Math.ceil(numIngr / 3);
+        this.time = peroieds * 15;
 
     }
 
-    calcServing (){
+    calcServing() {
         this.serving = 4;
     }
-}
+
+    parseIngredients() {
+
+            const unitsLong = ['tablespoons', 'tablespoon', 'ounces', 'ounce', 'teaspoons', 'teaspoon', 'cups', 'pounds'];
+            const unitsShort = ['tbsp', 'tbsp', 'oz', 'oz', 'tsp', 'tsp', 'cup', 'pound'];
+            const newIngredients = this.ingredients.map(el => {
+                    // 1. Uniform units
+                    let ingredient = el.toLowerCase();
+                    unitsLong.forEach((unit, i) => {
+                        ingredient = ingredient.replace(unit, unitsShort[i]);
+
+                        // 2. remove parentheses
+
+                        // 3 .parse ingredients into count , unit and ingredient
+
+                    })
+
+                    this.ingredients = newIngredients;
+
+
+                }
+            }
